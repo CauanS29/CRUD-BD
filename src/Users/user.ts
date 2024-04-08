@@ -39,7 +39,7 @@ export async function getUser(req: Request, res: Response): Promise<void> {
 
 export async function addUser(req: Request, res: Response): Promise<void> {
   try {
-    const { id, nome, email, senha }: User = req.body; // Extrair os dados do body
+    const { id, nome, email, senha }: User = req.body; 
 
     await db.query("SET search_path TO ryller_tv");
     const query = `

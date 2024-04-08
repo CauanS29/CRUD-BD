@@ -1,9 +1,8 @@
 // server.ts
 import express from 'express';
-import router from './routes/user';
+import router from './routes';
 const body = require('body-parser'); 
 
-import { Client } from 'pg';
 
 
 const app = express();
