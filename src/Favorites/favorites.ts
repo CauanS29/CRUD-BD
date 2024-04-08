@@ -8,22 +8,30 @@ interface Favorite {
     idFavoritos: Number
 }
 
-  export async function addFavorite(req: Request, res: Response): Promise<void> {
-    try {
-      const {idUsuario, idFavoritos}: Favorite = req.body; 
-  
-      await db.query("SET search_path TO ryller_tv");
-      const query = 'INSERT INTO favoritos_usuario (idUsuario, idFavoritos) VALUES ($1, $2) RETURNING *';
+export async function addFavorite(req: Request, res: Response): Promise<void> {
+    const client = await db.connect();
 
-      const queryValues = [idUsuario, idFavoritos];
-      await db.query(query, queryValues);
-  
-      res.status(201).send("Favorito adicionado com sucesso");
+    try {
+        await client.query('BEGIN');
+
+        const { idUsuario, idFavoritos }: Favorite = req.body;
+
+        const query = 'INSERT INTO favoritos_usuario (idUsuario, idFavoritos) VALUES ($1, $2) RETURNING *';
+        const queryValues = [idUsuario, idFavoritos];
+
+        await client.query(query, queryValues);
+
+        await client.query('COMMIT');
+
+        res.status(201).send('Favorito adicionado com sucesso');
     } catch (error) {
-      console.error("Erro ao adicionar Favorito:", error);
-      res.status(500).send("Erro interno no servidor");
+        await client.query('ROLLBACK');
+        console.error('Erro ao adicionar favorito:', error);
+        res.status(500).send('Erro interno no servidor');
+    } finally {
+        client.release();
     }
-  }
+}
 
   export async function getFavorites(req: Request, res: Response): Promise<void> {
     try {
