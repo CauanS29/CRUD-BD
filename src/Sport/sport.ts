@@ -1,6 +1,6 @@
 // db.ts
 const db = require("../dataabse/index");
-import { Request, Response } from "express"; // Importe Request e Response do Express
+import { Request, Response } from "express"; 
 
 interface Sport {
     id: number;
